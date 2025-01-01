@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mines Game</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .game-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .controls {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 200px;
+        }
+
+        .controls button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            background: #218838;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 10px;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            background: #2b2b2b;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .cell:hover {
+            background: #3a3a3a;
+        }
+
+        .cell.bomb {
+            background: red;
+            color: white;
+        }
+
+        .cell.safe {
+            background: green;
+            color: white;
+        }
+
+        .multipliers {
+            display: flex;
+            gap: 10px;
+        }
+
+        .multipliers span {
+            background: #1a1a1a;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Controls Section -->
+        <div class="controls">
+            <h2>Mines</h2>
+            <label>
+                Ваша ставка (руб):
+                <input type="number" id="bet" value="0" style="width: 100%; padding: 5px;">
+            </label>
+
+            <label>
+                Количество бомб:
+                <select id="bomb-count" style="width: 100%; padding: 5px;">
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="24">24</option>
+                </select>
+            </label>
+
+            <button id="start-game">Играть</button>
+
+            <div class="multipliers">
+                <span>1.08x</span>
+                <span>1.23x</span>
+                <span>1.42x</span>
+                <span>1.64x</span>
+                <span>1.92x</span>
+                <span>2.25x</span>
+                <span>2.68x</span>
+            </div>
+        </div>
+
+        <!-- Grid Section -->
+        <div class="grid" id="game-grid">
+            <!-- Dynamically generated cells -->
+        </div>
+    </div>
+
+    <script>
+        const grid = document.getElementById('game-grid');
+        const startButton = document.getElementById('start-game');
+        const bombCountInput = document.getElementById('bomb-count');
+
+        function generateGrid() {
+            grid.innerHTML = '';
+            const totalCells = 25;
+            const bombCount = parseInt(bombCountInput.value);
+
+            // Generate bomb positions
+            const bombPositions = new Set();
+            while (bombPositions.size < bombCount) {
+                bombPositions.add(Math.floor(Math.random() * totalCells));
+            }
+
+            // Create cells
+            for (let i = 0; i < totalCells; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+
+                if (bombPositions.has(i)) {
+                    cell.dataset.type = 'bomb';
+                } else {
+                    cell.dataset.type = 'safe';
+                }
+
+                cell.addEventListener('click', () => {
+                    if (cell.dataset.type === 'bomb') {
+                        cell.classList.add('bomb');
+                        alert('Вы проиграли!');
+                        generateGrid();
+                    } else {
+                        cell.classList.add('safe');
+                    }
+                });
+
+                grid.appendChild(cell);
+            }
+        }
+
+        startButton.addEventListener('click', () => {
+            generateGrid();
+        });
+
+        // Initialize grid
+        generateGrid();
+    </script>
+</body>
+</html>
